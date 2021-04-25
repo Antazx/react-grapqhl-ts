@@ -8,11 +8,12 @@ export default {
     migrations: {
         path: path.join(__dirname, "./migrations"), // path to the folder with migrations
         pattern: /^[\w-]+\d+\.[tj]s$/,
+        disableForeignKeys: false
     },
     entities: [Post],
     dbName: 'reddot',
     type: 'postgresql',
     debug: !__prod__,
-    user: 'postgres',
-    password: 'test-postgres'
+    user: 'reddot_user',
+    password: 'reddot_password'
 } as Parameters<typeof MikroORM.init>[0];

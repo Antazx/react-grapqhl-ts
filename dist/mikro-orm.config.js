@@ -10,12 +10,13 @@ exports.default = {
     migrations: {
         path: path_1.default.join(__dirname, "./migrations"),
         pattern: /^[\w-]+\d+\.[tj]s$/,
+        disableForeignKeys: false
     },
     entities: [Posts_1.Post],
     dbName: 'reddot',
     type: 'postgresql',
     debug: !constants_1.__prod__,
-    user: 'postgres',
-    password: 'test-postgres'
+    user: 'reddot_user',
+    password: 'reddot_password'
 };
 //# sourceMappingURL=mikro-orm.config.js.map
