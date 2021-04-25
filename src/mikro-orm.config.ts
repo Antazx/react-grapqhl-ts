@@ -1,7 +1,7 @@
 import { __prod__ } from "./constants";
 import { Post } from "./entities/Posts";
 import { MikroORM } from "@mikro-orm/core";
-
+import { User } from "./entities/User";
 import path from "path";
 
 export default {
@@ -10,7 +10,7 @@ export default {
         pattern: /^[\w-]+\d+\.[tj]s$/,
         disableForeignKeys: false
     },
-    entities: [Post],
+    entities: [Post, User],
     dbName: 'reddot',
     type: 'postgresql',
     debug: !__prod__,
