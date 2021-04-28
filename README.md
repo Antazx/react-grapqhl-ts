@@ -1,6 +1,18 @@
 
-# FullStack app with React, GraphQL, PostgresQL and TypeScript
-
+# Reddot
+Clone of reddit, full stack app with:
+    
+- React
+- TypeScript
+- GraphQL
+- URQL/Apollo
+- Node.js
+- PostgreSQL (app database)
+- MikroORM/TypeORM
+- Redis (user session database)
+- Next.js
+- TypeGraphQL
+- Chakra
 ## MikroORM migrations
 Setting up migrations allows us to modify the postgres tables to add or remove the colums we have defined on the entities file. If we delete the property "surname" on our user entity file and then run the migration, the user postgres table will be modified with the same changes as in the entity
 
@@ -25,7 +37,8 @@ when user makes a request:
 Server decrypt the cookie
 2dafsadfasd87fadgg89adg -> sess:qwertuiop
 
-make a request to redis
+make a request to redis and stores it on req.session
 sess:qwertuiop -> {userId: 1}
+req.session = { userId: 1}
 
 ```

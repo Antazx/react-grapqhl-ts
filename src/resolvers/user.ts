@@ -2,6 +2,7 @@ import { User } from "../entities/User";
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import { MyContext } from "../types";
 import argon2 from "argon2";
+import { COOKIE_NAME } from "../constants";
 //import session from "express-session";
 
 //Declaration merging allows us to add properties to express session
@@ -51,10 +52,9 @@ class FieldError {
 
 @Resolver()
 export class UserResolver {
-
     @Query(() => User, { nullable: true })
     async me(@Ctx() { em, req }: MyContext) {
-        return (!req.session.userId) ? null : await em.findOne(User, {id: req.session.userId}); 
+        return !req.session.userId ? null : await em.findOne(User, { id: req.session.userId });
     }
 
     @Mutation(() => UserResponse)
@@ -136,8 +136,23 @@ export class UserResolver {
                 ]
             };
         }
-
         req.session!.userId = user.id;
         return { user };
+    }
+
+    @Mutation(() => Boolean)
+    logout(@Ctx() { req, res }: MyContext) {
+        console.log("Logout call");
+        return new Promise((resolve) =>
+            req.session.destroy((err) => {
+                res.clearCookie(COOKIE_NAME);
+                if(err) {
+                    console.error(err);
+                    resolve(false);
+                    return
+                }
+                resolve(true);
+            })
+        );
     }
 }

@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/core";
-import { __prod__ } from "./constants";
+import { COOKIE_NAME, __prod__ } from "./constants";
 import mikroConfig from "./mikro-orm.config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
@@ -11,7 +11,7 @@ import { UserResolver } from "./resolvers/user";
 import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
-import { MyContext } from "./types";
+import cors from "cors";
 
 const main = async () => {
     const orm = await MikroORM.init(mikroConfig);
@@ -22,11 +22,16 @@ const main = async () => {
 
     const RedisStore = connectRedis(session);
     const redisClient = redis.createClient();
-
+    app.use(
+        cors({
+            origin: "http://localhost:3000",
+            credentials: true
+        })
+    );
     app.use(
         session({
-            name: 'qid',
-            store: new RedisStore({ 
+            name: COOKIE_NAME,
+            store: new RedisStore({
                 client: redisClient,
                 //disableTouch to set sesion forever otherwise each time the user performs an action it will touch redis to extend user's sesion
                 disableTouch: true
@@ -34,7 +39,7 @@ const main = async () => {
             cookie: {
                 maxAge: 1000 * 60 * 60 * 24 * 365 * 10, //10 years
                 httpOnly: true, //disallow accesing cookies in front-end
-                sameSite: 'lax', //csrf
+                sameSite: "lax", //csrf
                 secure: __prod__ //https only in prod
             },
             saveUninitialized: false, //Don't store empty sessions
@@ -49,10 +54,10 @@ const main = async () => {
             validate: false
         }),
         //Special object accesible by all the resolvers
-        context: ({ req, res }): MyContext => ({ em: orm.em, req, res })
+        context: ({ req, res }) => ({ em: orm.em, req, res })
     });
 
-    appolloServer.applyMiddleware({ app });
+    appolloServer.applyMiddleware({ app, cors: false });
 
     app.listen(4000, () => {
         console.log("Started server on localhost:4000");
